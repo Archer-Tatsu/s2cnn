@@ -17,7 +17,7 @@ Stream = namedtuple('Stream', ['ptr'])
 
 
 def compile_kernel(kernel, filename, functioname):
-    program = Program(bytes(kernel, 'ascii'), filename)
+    program = Program(bytes(kernel, 'ascii'), filename, lib_name='nvrtc64_91.dll')
     ptx = program.compile()
 
     m = function.Module()
