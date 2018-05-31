@@ -4,7 +4,6 @@ import time
 from functools import wraps
 from functools import lru_cache
 import pickle
-import gzip
 import os
 import sys
 
@@ -81,14 +80,14 @@ def cached_dirpklgz(dirname):
             try:
                 filename = index[args]
             except KeyError:
-                index[args] = filename = "{}.pkl.gz".format(len(index))
+                index[args] = filename = "{}.pkl".format(len(index))
                 with open(indexfile, "wb") as file:
                     pickle.dump(index, file)
 
             filepath = os.path.join(dirname, filename)
 
             try:
-                with gzip.open(filepath, "rb") as file:
+                with open(filepath, "rb") as file:
                     print("load {}... ".format(filename), end="")
                     result = pickle.load(file)
             except FileNotFoundError:
@@ -96,8 +95,8 @@ def cached_dirpklgz(dirname):
                 sys.stdout.flush()
                 result = func(*args)
                 print("save {}... ".format(filename), end="")
-                with gzip.open(filepath, "wb") as file:
-                    pickle.dump(result, file)
+                with open(filepath, "wb") as file:
+                    pickle.dump(result, file, protocol=4)
             print("done")
             return result
         return wrapper
